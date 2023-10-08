@@ -442,7 +442,7 @@ class ChangePassword:
             new_password = password_new
             c.execute("UPDATE Users SET password=? WHERE username=?", (hashlib.md5(new_password.encode()).hexdigest(), username))
             BMIDB.commit()
-            messagebox.showinfo('Quên mật khẩu', 'Mật khẩu đã được đổi thành công. Vui lòng đăng nhập và đổi mật khẩu sau khi đăng nhập.')
+            messagebox.showinfo('Quên mật khẩu', 'Mật khẩu đã được đổi thành công.')
         else:
             messagebox.showerror('Quên mật khẩu', 'Thông tin tài khoản không đúng.')
 
