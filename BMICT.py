@@ -199,16 +199,16 @@ class Register:
         self.master.configure(background='white')
 
         self.label1 = Label(self.master, text="Tên tài khoản: ")
-        self.label1.grid(row=1, column=0, pady=5)
+        self.label1.grid(row=1, column=0, pady=5, sticky="w")
         self.username = Entry(self.master)
         self.username.grid(row=1, column=1, pady=5)
 
         self.label2 = Label(self.master, text="Mật khẩu: ")
-        self.label2.grid(row=2, column=0, pady=5)
+        self.label2.grid(row=2, column=0, pady=5, sticky="w")
         self.password = Entry(self.master, show="*")
         self.password.grid(row=2, column=1, pady=5)
         self.label3 = Label(self.master, text="Email: ")
-        self.label3.grid(row=3, column=0, pady=5)
+        self.label3.grid(row=3, column=0, pady=5, sticky="w")
         self.email = Entry(self.master)
         self.email.grid(row=3, column=1, pady=5)
 
@@ -241,10 +241,6 @@ class Register:
         if self.is_username_exists(username):
             messagebox.showerror('Đăng ký', 'Tên tài khoản đã tồn tại.')
             return
-        
-        if self.is_email_exists(email):
-            messagebox.showerror('Đăng ký', 'Email đã tồn tại.')
-            return
 
         # Lưu thông tin tài khoản vào CSDL (trong trường hợp thực tế, bạn cần mã hóa mật khẩu trước khi lưu)
         c.execute("INSERT INTO Users (username, password, email) VALUES (?, ?, ?)", (username, hashlib.md5(password.encode()).hexdigest(), email))
@@ -265,13 +261,6 @@ class Register:
         if user:
             return True
         return False
-    
-    def is_email_exists(self, email):
-        c.execute("SELECT * FROM Users WHERE email=?", (email,))
-        user = c.fetchone()
-        if user:
-            return True
-        return False
 
     def go_to_login(self, event=None):
         self.master.destroy()
@@ -288,7 +277,7 @@ class Login:
         self.master.configure(background='white')
 
         self.label1 = Label(self.master, text="Tên tài khoản: ")
-        self.label1.grid(row=0, column=0, pady=5)
+        self.label1.grid(row=0, column=0, pady=5, sticky="w")
         self.username = Entry(self.master)
         self.username.grid(row=0, column=1, pady=5)
 
@@ -305,11 +294,11 @@ class Login:
         self.register_link.bind("<Button-1>", self.go_to_register)
 
         self.forgot_password_button = Button(self.master, text="Quên mật khẩu", command=self.go_to_forgot_password)
-        self.forgot_password_button.grid(row=4, columnspan=2, pady=5)
+        self.forgot_password_button.grid(row=3, columnspan=2, pady=5)
 
-        self.change_password_button = Button(self.master, text="Đổi mật khẩu", command=self.go_to_change_password)
-        self.change_password_button.grid(row=3, columnspan=2, pady=5)
-
+        self.change_password_button = Label(self.master, text="Đổi mật khẩu", fg='blue', cursor='hand2')
+        self.change_password_button.grid(row=4, columnspan=2, pady=5)
+        self.change_password_button.bind("<Button-1>", self.go_to_change_password)
 
     def login(self):
         global logged_in_user
@@ -340,7 +329,7 @@ class Login:
         myGUIForgotPassword = ForgotPassword(root)
         root.mainloop()
 
-    def go_to_change_password(self):
+    def go_to_change_password(self, event=None):
         self.master.destroy()
         root = Tk()
         myGUIForgotPassword = ChangePassword(root)
@@ -356,12 +345,12 @@ class ForgotPassword:
         self.master.configure(background='white')
 
         self.label1 = Label(self.master, text="Tên tài khoản: ")
-        self.label1.grid(row=0, column=0, pady=5)
+        self.label1.grid(row=0, column=0, pady=5, sticky="w")
         self.username = Entry(self.master)
         self.username.grid(row=0, column=1, pady=5)
 
         self.label2 = Label(self.master, text="Email: ")
-        self.label2.grid(row=1, column=0, pady=5)
+        self.label2.grid(row=1, column=0, pady=5, sticky="w")
         self.email = Entry(self.master)
         self.email.grid(row=1, column=1, pady=5)
 
@@ -403,22 +392,22 @@ class ChangePassword:
         self.master.configure(background='white')
 
         self.label1 = Label(self.master, text="Tên tài khoản: ")
-        self.label1.grid(row=0, column=0, pady=5)
+        self.label1.grid(row=0, column=0, pady=5, sticky="w")
         self.username = Entry(self.master)
         self.username.grid(row=0, column=1, pady=5)
 
         self.label2 = Label(self.master, text="Email: ")
-        self.label2.grid(row=1, column=0, pady=5)
+        self.label2.grid(row=1, column=0, pady=5, sticky="w")
         self.email = Entry(self.master)
         self.email.grid(row=1, column=1, pady=5)
 
         self.label3 = Label(self.master, text="Mật khẩu cũ: ")
-        self.label3.grid(row=2, column=0, pady=5)
+        self.label3.grid(row=2, column=0, pady=5, sticky="w")
         self.password_old = Entry(self.master, show="*")
         self.password_old.grid(row=2, column=1, pady=5)
         
         self.label4 = Label(self.master, text="Mật khẩu mới: ")
-        self.label4.grid(row=3, column=0, pady=5)
+        self.label4.grid(row=3, column=0, pady=5, sticky="w")
         self.password_new = Entry(self.master, show="*")
         self.password_new.grid(row=3, column=1, pady=5)
 
