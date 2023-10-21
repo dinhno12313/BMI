@@ -9,23 +9,27 @@ import datetime
 from tkinter import messagebox
 from matplotlib import pyplot as plt
 
+
 BMIDB = sqlite3.connect("bmidatabase.db")
 c = BMIDB.cursor()
 class Welcome():
     def __init__ (self, master): 
         self.master = master 
-        self.master.geometry('260x260+100+200')
+        self.master.geometry('350x350+100+200')
         self.master.title('BMI Welcome') 
         self.master.configure(background='white') 
         welcometext = "CHÀO MỪNG BẠN ĐẾN VỚI BMI CALCULATOR"
         self.label1 = Label(self.master, text = welcometext, fg='red', background = 'white').grid(row=1, column=1) 
         today = datetime.datetime.now()
         repr(today) 
-        self.label3 = Label(self.master, text = ("Thời gian:",today), fg='black', background = 'white').place(x=0, y=140)
+        self.label3 = Label(self.master, text = ("Thời gian:",today), fg='black', background = 'white').place(x=0, y=170)
         self.button1 = Button(self.master, text= "BMI Calculator", fg = 'blue', width = 15, command = self.gotobmicalculator).place(x=0, y=20) 
         self.button2 = Button(self.master, text = "Sổ theo dõi", fg = 'blue', width = 15, command = self.gotorecords).place(x=0, y=50)
         self.button3 = Button(self.master, text = "Biểu đồ cân nặng", fg = 'blue', width = 15, command = self.gotochart).place(x=0, y=80)
         self.button4 = Button(self.master, text = "Thoát",fg='blue', width = 15, command=self.exit).place(x=0, y=110)
+        self.button5 = Button(self.master, text="Phản hồi", fg='blue', width = 15, command=self.gotofeedback).place(x=0, y=140)
+
+
     def exit(self):
         self.master.destroy()
     def gotobmicalculator(self):
@@ -35,7 +39,57 @@ class Welcome():
         root2=Toplevel(self.master)
         mygui=records(root2)
     def gotochart(self):
-        myguii=chart(self.master)
+        mygui=chart(self.master)
+    def gotofeedback(self):
+        root2 = Toplevel(self.master)
+        mygui=feedback(root2)
+
+class feedback():
+    def __init__(self, master):
+        c.execute('CREATE TABLE IF NOT EXISTS feedback(comment TEXT, rating INTEGER)')
+        self.master = master
+        self.master.geometry('400x300+650+250')
+        self.master.title('Phản hồi và đánh giá')
+        self.master.configure(background='white')
+        
+        self.label1 = Label(self.master, text="Phản hồi: ")
+        self.label1.grid(row=1, column=0, pady=10, sticky="w")
+        
+        # Sử dụng Text thay vì Entry để làm cho phản hồi mở rộng khi cần
+        self.comment = Text(self.master, height=5, width=30)
+        self.comment.grid(row=1, column=1, pady=10, padx=10)
+        
+        self.label2 = Label(self.master, text="Đánh giá (Từ 1 đến 5): ")
+        self.label2.grid(row=2, column=0, pady=10, sticky="w")
+        self.rating = Entry(self.master)
+        self.rating.grid(row=2, column=1, pady=10)
+
+        self.sent_button = Button(self.master, text="Gửi", command=self.Gui, width=15)
+        self.sent_button.grid(row=4, columnspan=2, pady=10)
+
+        self.button = Button(self.master, text="Trở về", width=15, fg='red', command=self.exit)
+        self.button.grid(row=5, columnspan=2, pady=5)
+
+    def Gui(self):
+        comment = self.comment.get("1.0", "end-1c")
+        rating = self.rating.get()
+
+        if not rating:
+            messagebox.showinfo('Phản hồi và đánh giá', 'Thông tin không hợp lệ!')
+            return
+        
+        if int(rating) > 5 or int(rating) <1:
+            messagebox.showinfo('Phản hồi và đánh giá', 'Thông tin không hợp lệ!')
+            return
+
+        c.execute('INSERT INTO feedback (comment, rating) VALUES (?, ?)', (comment, rating))
+        BMIDB.commit()
+        messagebox.showinfo('Phản hồi và đánh giá', 'Gửi thành công! Cảm ơn bạn đã phản hồi!')
+
+    def exit(self):
+        self.master.destroy()
+
+
 class bmicalculator():
     def __init__(self,master):
         c.execute('CREATE TABLE IF NOT EXISTS BMIStorage(timestamp TEXT, bodymassindex REAL, weightclass TEXT, weightkg REAL)')
@@ -272,7 +326,7 @@ class Register:
 class Login:
     def __init__(self, master):
         self.master = master
-        self.master.geometry('250x210+650+250')
+        self.master.geometry('300x250+650+250')
         self.master.title('Đăng nhập')
         self.master.configure(background='white')
 
